@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout - Quantum Store</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a0a2e 50%, #0a0a0a 100%);
+  color: white;
+  min-height: 100vh;
+}
+
+/* Navigation */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 20px 40px;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  border-bottom: 2px solid rgba(0, 255, 255, 0.2);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000;
+}
+
+.nav-brand {
+  font-size: 1.5em;
+  font-weight: bold;
+  background: linear-gradient(45deg, #00ffff, #ff00ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.nav-links {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+}
+
+.nav-link {
+  color: white;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  transition: all 0.3s;
+  border: 2px solid transparent;
+}
+
+.nav-link:hover {
+  border-color: #00ffff;
+  background: rgba(0, 255, 255, 0.1);
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+}
+
+/* Checkout Container */
+.checkout-container {
+  margin-top: 100px;
+  padding: 40px;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.page-title {
+  font-size: 3em;
+  margin-bottom: 40px;
+  text-align: center;
+  background: linear-gradient(45deg, #00ffff, #ff00ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.checkout-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 40px;
+}
+
+/* Checkout Form */
+.checkout-form {
+  background: rgba(20, 20, 40, 0.6);
+  border: 2px solid rgba(0, 255, 255, 0.2);
+  border-radius: 15px;
+  padding: 40px;
+}
+
+.form-section {
+  margin-bottom: 40px;
+}
+
+.section-title {
+  font-size: 1.8em;
+  color: #00ffff;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.form-group {
+  margin-bottom: 25px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 10px;
+  color: #00ffff;
+  font-weight: bold;
+}
+
+.form-input {
+  width: 100%;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 2px solid rgba(0, 255, 255, 0.3);
+  border-radius: 10px;
+  color: white;
+  font-size: 1em;
+  transition: all 0.3s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #00ffff;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+}
+
+.form-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.quantum-notice {
+  background: rgba(0, 255, 255, 0.1);
+  border-left: 4px solid #00ffff;
+  padding: 15px;
+  margin: 25px 0;
+  border-radius: 5px;
+  font-size: 0.9em;
+}
+
+/* Order Summary */
+.order-summary {
+  background: rgba(20, 20, 40, 0.8);
+  border: 2px solid rgba(0, 255, 255, 0.3);
+  border-radius: 15px;
+  padding: 30px;
+  height: fit-content;
+  position: sticky;
+  top: 120px;
+}
+
+.summary-title {
+  font-size: 1.8em;
+  color: #00ffff;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.order-items {
+  margin-bottom: 25px;
+}
+
+.order-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  margin-bottom: 10px;
+  background: rgba(0, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+.item-details {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.item-icon-small {
+  font-size: 2em;
+}
+
+.item-name-small {
+  color: #00ffff;
+  font-weight: bold;
+}
+
+.item-price-small {
+  color: #00ff00;
+  font-weight: bold;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.summary-label {
+  opacity: 0.7;
+}
+
+.summary-value {
+  font-weight: bold;
+  color: #00ffff;
+}
+
+.summary-total {
+  display: flex;
+  justify-content: space-between;
+  padding: 25px 0;
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.total-label {
+  color: #00ffff;
+}
+
+.total-value {
+  color: #00ff00;
+  font-size: 1.5em;
+  text-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+}
+
+/* Buttons */
+.btn {
+  width: 100%;
+  padding: 20px;
+  border: none;
+  border-radius: 25px;
+  font-size: 1.2em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 10px;
+}
+
+.btn-place-order {
+  background: linear-gradient(45deg, #00ffff, #0099ff);
+  color: white;
+}
+
+.btn-place-order:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+}
+
+.btn-place-order:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-back {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  text-align: center;
+  text-decoration: none;
+  display: block;
+}
+
+.btn-back:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: #ff00ff;
+}
+
+/* Success Modal */
+.success-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 2000;
+  justify-content: center;
+  align-items: center;
+}
+
+.success-modal.show {
+  display: flex;
+}
+
+.success-content {
+  background: rgba(20, 20, 40, 0.95);
+  padding: 60px;
+  border-radius: 20px;
+  border: 2px solid #00ffff;
+  box-shadow: 0 0 50px rgba(0, 255, 255, 0.5);
+  text-align: center;
+  max-width: 600px;
+  animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: scale(0.8) translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+.success-icon {
+  font-size: 6em;
+  margin-bottom: 30px;
+  animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+.success-title {
+  font-size: 2.5em;
+  color: #00ffff;
+  margin-bottom: 20px;
+}
+
+.success-message {
+  font-size: 1.2em;
+  margin-bottom: 30px;
+  opacity: 0.8;
+}
+
+.order-id {
+  background: rgba(0, 255, 255, 0.1);
+  padding: 15px;
+  border-radius: 10px;
+  font-family: 'Courier New', monospace;
+  margin-bottom: 30px;
+}
+
+/* Responsive */
+@media (max-width: 968px) {
+  .checkout-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .order-summary {
+    position: static;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="navbar">
+  <div class="nav-brand">⚛️ Quantum Store</div>
+  <div class="nav-links">
+    <a href="/" class="nav-link">🏠 Home</a>
+    <a href="/store" class="nav-link">🛒 Store</a>
+    <a href="/cart" class="nav-link">🛒 Cart</a>
+  </div>
+</nav>
+
+<!-- Checkout Container -->
+<div class="checkout-container">
+  <h1 class="page-title">⚡ Quantum Checkout</h1>
+  
+  <div class="checkout-grid" id="checkoutGrid">
+    <!-- Loading state -->
+    <div style="text-align: center; padding: 100px; grid-column: 1 / -1;">
+      <div style="font-size: 3em; margin-bottom: 20px;">⏳</div>
+      <div style="font-size: 1.5em; color: #00ffff;">Loading checkout...</div>
+    </div>
+  </div>
+</div>
+
+<!-- Success Modal -->
+<div class="success-modal" id="successModal">
+  <div class="success-content">
+    <div class="success-icon">✅</div>
+    <h2 class="success-title">Order Placed Successfully!</h2>
+    <p class="success-message">
+      Your quantum purchase has been confirmed across all parallel universes.
+    </p>
+    <div class="order-id">
+      Order ID: <strong id="orderId"></strong>
+    </div>
+    <a href="/store" class="btn btn-place-order">Continue Shopping</a>
+    <a href="/" class="btn btn-back">Back to Home</a>
+  </div>
+</div>
+
+<script>
+const API_URL = 'http://localhost:5000/api';
+let cartData = null;
+
+// Load cart for checkout
+async function loadCheckout() {
+  try {
+    const response = await fetch(`${API_URL}/cart`);
+    const data = await response.json();
+    cartData = data;
+    
+    if (!data.items || data.items.length === 0) {
+      // Empty cart - redirect to cart page
+      document.getElementById('checkoutGrid').innerHTML = `
+        <div style="text-align: center; padding: 100px; grid-column: 1 / -1;">
+          <div style="font-size: 5em; margin-bottom: 20px;">🛒</div>
+          <div style="font-size: 1.5em; margin-bottom: 30px;">Your cart is empty</div>
+          <a href="/store" class="btn btn-place-order" style="max-width: 300px; margin: 0 auto;">
+            Browse Products
+          </a>
+        </div>
+      `;
+      return;
+    }
+    
+    // Render checkout form and summary
+    document.getElementById('checkoutGrid').innerHTML = `
+      <!-- Checkout Form -->
+      <div class="checkout-form">
+        <form id="checkoutForm" onsubmit="placeOrder(event)">
+          <!-- Contact Information -->
+          <div class="form-section">
+            <h2 class="section-title">📧 Contact Information</h2>
+            <div class="form-group">
+              <label class="form-label">Email Address *</label>
+              <input type="email" class="form-input" name="email" 
+                     placeholder="your@email.com" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Full Name *</label>
+              <input type="text" class="form-input" name="name" 
+                     placeholder="John Quantum" required>
+            </div>
+          </div>
+          
+          <!-- Quantum Details -->
+          <div class="form-section">
+            <h2 class="section-title">⚛️ Quantum Details</h2>
+            <div class="form-group">
+              <label class="form-label">Universe ID (Optional)</label>
+              <input type="text" class="form-input" name="universe" 
+                     placeholder="Leave blank for auto-detection">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Timeline Branch (Optional)</label>
+              <input type="text" class="form-input" name="timeline" 
+                     placeholder="Will be assigned at wavefunction collapse">
+            </div>
+          </div>
+          
+          <div class="quantum-notice">
+            ⚛️ <strong>Quantum Delivery Notice:</strong> Your digital products will be delivered 
+            instantly across all parallel universes upon order confirmation. Physical manifestation 
+            may vary depending on local quantum field fluctuations.
+          </div>
+          
+          <button type="submit" class="btn btn-place-order" id="placeOrderBtn">
+            ⚡ Place Order - $${data.total}
+          </button>
+          <a href="/cart" class="btn btn-back">← Back to Cart</a>
+        </form>
+      </div>
+      
+      <!-- Order Summary -->
+      <div class="order-summary">
+        <h2 class="summary-title">📦 Order Summary</h2>
+        <div class="order-items">
+          ${data.items.map(item => `
+            <div class="order-item">
+              <div class="item-details">
+                <span class="item-icon-small">${item.image}</span>
+                <span class="item-name-small">${item.name}</span>
+              </div>
+              <span class="item-price-small">$${item.price}</span>
+            </div>
+          `).join('')}
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Items:</span>
+          <span class="summary-value">${data.count}</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Subtotal:</span>
+          <span class="summary-value">$${data.total}</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Quantum Tax:</span>
+          <span class="summary-value">$0 (tax-free across universes)</span>
+        </div>
+        <div class="summary-total">
+          <span class="total-label">Total:</span>
+          <span class="total-value">$${data.total}</span>
+        </div>
+        <div class="quantum-notice" style="margin-top: 25px;">
+          💰 Your payment exists in superposition until the order is confirmed.
+        </div>
+      </div>
+    `;
+    
+  } catch (error) {
+    console.error('Failed to load checkout:', error);
+    document.getElementById('checkoutGrid').innerHTML = `
+      <div style="text-align: center; padding: 100px; grid-column: 1 / -1; color: #ff0000;">
+        <div style="font-size: 5em; margin-bottom: 20px;">⚠️</div>
+        <div style="font-size: 1.5em;">Failed to load checkout</div>
+        <div style="margin-top: 20px; opacity: 0.7;">Make sure the server is running</div>
+      </div>
+    `;
+  }
+}
+
+// Place order
+async function placeOrder(event) {
+  event.preventDefault();
+  
+  const btn = document.getElementById('placeOrderBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Processing quantum transaction...';
+  
+  // Simulate order processing
+  await new Promise(resolve => setTimeout(resolve, 2000));
+  
+  // Generate order ID
+  const orderId = 'QO-' + Date.now().toString(36).toUpperCase() + '-' + 
+                  Math.random().toString(36).substr(2, 5).toUpperCase();
+  
+  // Clear cart
+  try {
+    await fetch(`${API_URL}/cart`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'clear' })
+    });
+  } catch (error) {
+    console.error('Failed to clear cart:', error);
+  }
+  
+  // Show success modal
+  document.getElementById('orderId').textContent = orderId;
+  document.getElementById('successModal').classList.add('show');
+  
+  console.log('Order placed:', orderId);
+}
+
+// Initialize
+loadCheckout();
+</script>
+</body>
+</html>

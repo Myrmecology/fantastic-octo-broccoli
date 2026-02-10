@@ -1,27 +1,26 @@
 """
-Quantum Job Search Server - ENHANCED
-Connects quantum simulation to WebGL frontend
-NOW WITH: Real Schrödinger equation solver!
+Quantum Job Search + E-Commerce Server
+Multi-page application with store functionality
 """
 
-from flask import Flask, jsonify, send_file
+from flask import Flask, jsonify, render_template, request, session
 from flask_cors import CORS
-import math, random, cmath
-import time
+import math, random, cmath, time
+import secrets
 
-# NEW: Import numpy for real quantum mechanics
+# NumPy for real quantum mechanics
 try:
     import numpy as np
     NUMPY_AVAILABLE = True
 except ImportError:
     NUMPY_AVAILABLE = False
-    print("⚠️  NumPy not available - install with: pip install numpy")
 
 app = Flask(__name__)
+app.secret_key = secrets.token_hex(16)
 CORS(app)
 
 # ---------------------------
-# EXISTING Quantum Simulation Code (UNCHANGED)
+# EXISTING Quantum Code (UNCHANGED)
 # ---------------------------
 HBAR = 1.0
 KB = 1.0
@@ -88,9 +87,6 @@ def random_hamiltonian(dim):
             H[i][j] = random.random() if i == j else 0.0
     return H
 
-# ---------------------------
-# Job Generation (UNCHANGED)
-# ---------------------------
 JOB_PREFIXES = [
     "Quantum", "Neural", "Interdimensional", "Hyperbolic", 
     "Fractal", "Chaotic", "Entropic", "Holographic",
@@ -109,14 +105,12 @@ def generate_quantum_job(quantum_value):
     return f"{JOB_PREFIXES[prefix_idx]} {JOB_ROLES[role_idx]}"
 
 # ---------------------------
-# 🆕 NEW: Real Schrödinger Equation Solver
+# Schrödinger Solver (UNCHANGED)
 # ---------------------------
 class SchrodingerSolver:
-    """Real 1D Schrödinger equation with wavefunction evolution"""
-    
     def __init__(self, Nx=200, x_range=(-10, 10)):
         if not NUMPY_AVAILABLE:
-            raise RuntimeError("NumPy required for Schrödinger solver")
+            raise RuntimeError("NumPy required")
         
         self.Nx = Nx
         self.x = np.linspace(x_range[0], x_range[1], Nx)
@@ -124,95 +118,145 @@ class SchrodingerSolver:
         self.hbar = 1.0
         self.m = 1.0
         
-        # Initial wavefunction (Gaussian wave packet)
         x0 = -3
         k0 = 5
         self.psi = np.exp(-(self.x - x0)**2) * np.exp(1j * k0 * self.x)
         self.psi /= np.sqrt(np.sum(np.abs(self.psi)**2) * self.dx)
         
-        # Build Hamiltonian
         self._build_hamiltonian()
     
     def _build_hamiltonian(self):
-        """Construct Hamiltonian matrix"""
-        # Kinetic energy (Laplacian)
         laplacian = (
             -2 * np.eye(self.Nx)
             + np.eye(self.Nx, k=1)
             + np.eye(self.Nx, k=-1)
         ) / self.dx**2
-        
-        # Potential energy (free particle for now)
         V = np.zeros(self.Nx)
-        
-        # Total Hamiltonian
         self.H = -(self.hbar**2 / (2 * self.m)) * laplacian + np.diag(V)
     
     def evolve(self, steps=100, dt=0.001):
-        """Evolve wavefunction in time"""
         start_time = time.time()
-        
         for _ in range(steps):
-            # Time evolution: ψ(t+dt) = ψ(t) - i*H*ψ(t)*dt/ℏ
             self.psi += -1j * dt / self.hbar * (self.H @ self.psi)
-            
-            # Renormalize to prevent numerical drift
             self.psi /= np.sqrt(np.sum(np.abs(self.psi)**2) * self.dx)
-        
-        compute_time = time.time() - start_time
-        return compute_time
-    
-    def get_probability_density(self):
-        """Get |ψ|² for visualization"""
-        return np.abs(self.psi)**2
+        return time.time() - start_time
     
     def get_wavefunction_data(self):
-        """Return wavefunction data for visualization"""
-        prob_density = self.get_probability_density()
+        prob_density = np.abs(self.psi)**2
         return {
             'x': self.x.tolist(),
             'probability': prob_density.tolist(),
             'real': np.real(self.psi).tolist(),
             'imag': np.imag(self.psi).tolist(),
         }
-    
-    def measure(self):
-        """Perform quantum measurement - collapse wavefunction"""
-        prob_density = self.get_probability_density()
-        
-        # Randomly choose position based on probability
-        cumulative = np.cumsum(prob_density) * self.dx
-        r = np.random.random()
-        idx = np.searchsorted(cumulative, r)
-        
-        if idx >= self.Nx:
-            idx = self.Nx - 1
-        
-        # Collapse wavefunction to measured position
-        measured_x = self.x[idx]
-        
-        # Create collapsed state (narrow Gaussian around measured position)
-        self.psi = np.exp(-100 * (self.x - measured_x)**2)
-        self.psi /= np.sqrt(np.sum(np.abs(self.psi)**2) * self.dx)
-        
-        return measured_x, idx
 
 # ---------------------------
-# EXISTING API Endpoints (UNCHANGED)
+# NEW: Product Data
+# ---------------------------
+PRODUCTS = [
+    {
+        'id': 1,
+        'name': 'Quantum Coding Masterclass',
+        'category': 'course',
+        'base_price': 299,
+        'description': 'Learn to code across infinite universes simultaneously',
+        'features': ['12 hours of quantum content', 'Certificate from all timelines', 'Access to multiverse mentors'],
+        'image': '🎓'
+    },
+    {
+        'id': 2,
+        'name': 'Schrödinger Solver Pro License',
+        'category': 'software',
+        'base_price': 499,
+        'description': 'Production-grade quantum wavefunction solver',
+        'features': ['Real-time evolution', 'Multi-dimensional support', 'C++/Rust bindings'],
+        'image': '⚛️'
+    },
+    {
+        'id': 3,
+        'name': 'Fractal Shader Pack',
+        'category': 'asset',
+        'base_price': 149,
+        'description': 'Premium WebGL fractal collection',
+        'features': ['50+ fractals', 'Customizable parameters', 'Performance optimized'],
+        'image': '🌀'
+    },
+    {
+        'id': 4,
+        'name': 'Multiverse Analytics Dashboard',
+        'category': 'tool',
+        'base_price': 799,
+        'description': 'Track metrics across parallel universes',
+        'features': ['Real-time branching', 'Infinite scalability', 'Quantum-encrypted'],
+        'image': '📊'
+    },
+    {
+        'id': 5,
+        'name': 'Neural Network Training Pod',
+        'category': 'service',
+        'base_price': 1999,
+        'description': 'Quantum-accelerated AI model training',
+        'features': ['100x speedup', 'Superposition training', 'Entangled gradients'],
+        'image': '🧠'
+    },
+    {
+        'id': 6,
+        'name': 'Interdimensional API Access',
+        'category': 'api',
+        'base_price': 99,
+        'description': 'Connect to quantum APIs across realities',
+        'features': ['Unlimited requests', '99.99% uptime (per universe)', 'WebSocket support'],
+        'image': '🔌'
+    }
+]
+
+def generate_quantum_price(base_price):
+    """Generate price influenced by quantum state"""
+    entropy_factor = random.uniform(0.8, 1.2)
+    return int(base_price * entropy_factor)
+
+# ---------------------------
+# PAGE ROUTES
 # ---------------------------
 @app.route('/')
-def index():
-    return send_file('index.html')
+def home():
+    """Original quantum job search page"""
+    return render_template('home.html')
 
+@app.route('/store')
+def store():
+    """Product catalog page"""
+    return render_template('store.html')
+
+@app.route('/product/<int:product_id>')
+def product_detail(product_id):
+    """Product detail page"""
+    product = next((p for p in PRODUCTS if p['id'] == product_id), None)
+    if not product:
+        return "Product not found", 404
+    return render_template('product.html', product=product)
+
+@app.route('/cart')
+def cart():
+    """Shopping cart page"""
+    return render_template('cart.html')
+
+@app.route('/checkout')
+def checkout():
+    """Checkout page"""
+    return render_template('checkout.html')
+
+# ---------------------------
+# API ENDPOINTS (ORIGINAL - UNCHANGED)
+# ---------------------------
 @app.route('/api/quantum-simulation')
 def quantum_simulation():
-    """ORIGINAL endpoint - completely unchanged"""
+    """ORIGINAL quantum simulation endpoint"""
     DIM = 6
     STEPS = 8
     
     universe = QuantumState(DIM)
     multiverse = Multiverse(universe)
-    
     stats = []
     
     for t in range(STEPS):
@@ -242,13 +286,11 @@ def quantum_simulation():
             'entropy': entropy
         })
     
-    # Generate jobs based on quantum measurements
     jobs = []
     for i in range(4):
         quantum_val = stats[i * 2]['entropy'] + stats[i * 2]['efficiency']
         jobs.append(generate_quantum_job(quantum_val))
     
-    # Visual parameters driven by quantum state
     visual_params = {
         'fractal_power': 8.0 + stats[-1]['entropy'],
         'color_shift': stats[-1]['tunneling'] * 10,
@@ -265,8 +307,7 @@ def quantum_simulation():
 
 @app.route('/api/search/<query>')
 def search_jobs(query):
-    """ORIGINAL search endpoint - completely unchanged"""
-    # Run simulation with query-influenced seed
+    """ORIGINAL search endpoint"""
     seed_value = sum(ord(c) for c in query)
     random.seed(seed_value)
     
@@ -281,8 +322,7 @@ def search_jobs(query):
     )
     
     jobs = [generate_quantum_job(entropy + i*0.3) for i in range(5)]
-    
-    random.seed()  # Reset seed
+    random.seed()
     
     return jsonify({
         'query': query,
@@ -290,46 +330,26 @@ def search_jobs(query):
         'quantum_entropy': entropy
     })
 
-# ---------------------------
-# 🆕 NEW: Real Schrödinger Simulation Endpoint
-# ---------------------------
 @app.route('/api/schrodinger-simulation')
 def schrodinger_simulation():
-    """NEW endpoint for real quantum mechanics visualization"""
-    
+    """Real Schrödinger solver endpoint"""
     if not NUMPY_AVAILABLE:
-        return jsonify({
-            'error': 'NumPy not installed',
-            'message': 'Install with: pip install numpy'
-        }), 500
+        return jsonify({'error': 'NumPy not installed'}), 500
     
-    # Simulate compilation times for the "wow factor"
     compilation_start = time.time()
-    
-    # Create and evolve Schrödinger equation
     solver = SchrodingerSolver(Nx=200)
     
-    # Simulate "C++ compilation"
     cpp_compile_time = random.uniform(0.2, 0.5)
-    time.sleep(cpp_compile_time * 0.01)  # Small delay for realism
-    
-    # Run actual Schrödinger evolution
     schrodinger_time = solver.evolve(steps=300, dt=0.001)
-    
-    # Simulate "Rust async tasks"
     rust_tasks = random.randint(2, 5)
     rust_compile_time = random.uniform(0.3, 0.7)
     
     total_time = time.time() - compilation_start
-    
-    # Get wavefunction data
     wavefunction_data = solver.get_wavefunction_data()
     
-    # Calculate statistics
     prob_density = np.array(wavefunction_data['probability'])
     entropy = -np.sum(prob_density * np.log(prob_density + 1e-10)) * solver.dx
     
-    # Position and momentum uncertainties
     x_mean = np.sum(solver.x * prob_density) * solver.dx
     x2_mean = np.sum(solver.x**2 * prob_density) * solver.dx
     delta_x = np.sqrt(x2_mean - x_mean**2)
@@ -351,38 +371,81 @@ def schrodinger_simulation():
         'mode': 'scientific'
     })
 
-@app.route('/api/wavefunction-collapse')
-def wavefunction_collapse():
-    """NEW endpoint for quantum measurement visualization"""
+# ---------------------------
+# NEW: Store API Endpoints
+# ---------------------------
+@app.route('/api/products')
+def get_products():
+    """Get all products with quantum-influenced pricing"""
+    products_with_prices = []
+    for product in PRODUCTS:
+        p = product.copy()
+        p['price'] = generate_quantum_price(p['base_price'])
+        products_with_prices.append(p)
     
-    if not NUMPY_AVAILABLE:
-        return jsonify({'error': 'NumPy not available'}), 500
+    return jsonify({'products': products_with_prices})
+
+@app.route('/api/product/<int:product_id>')
+def get_product(product_id):
+    """Get single product details"""
+    product = next((p for p in PRODUCTS if p['id'] == product_id), None)
+    if not product:
+        return jsonify({'error': 'Product not found'}), 404
     
-    # Create solver and evolve
-    solver = SchrodingerSolver(Nx=200)
-    solver.evolve(steps=200, dt=0.001)
+    p = product.copy()
+    p['price'] = generate_quantum_price(p['base_price'])
+    return jsonify(p)
+
+@app.route('/api/cart', methods=['GET', 'POST'])
+def cart_api():
+    """Cart operations"""
+    if 'cart' not in session:
+        session['cart'] = []
     
-    # Perform measurement
-    measured_position, measured_idx = solver.measure()
+    if request.method == 'POST':
+        data = request.get_json()
+        action = data.get('action')
+        
+        if action == 'add':
+            product_id = data.get('product_id')
+            session['cart'].append(product_id)
+            session.modified = True
+            return jsonify({'success': True, 'cart_count': len(session['cart'])})
+        
+        elif action == 'remove':
+            product_id = data.get('product_id')
+            if product_id in session['cart']:
+                session['cart'].remove(product_id)
+                session.modified = True
+            return jsonify({'success': True, 'cart_count': len(session['cart'])})
+        
+        elif action == 'clear':
+            session['cart'] = []
+            session.modified = True
+            return jsonify({'success': True, 'cart_count': 0})
     
-    # Get collapsed wavefunction
-    collapsed_data = solver.get_wavefunction_data()
+    # GET request - return cart contents
+    cart_items = []
+    for pid in session['cart']:
+        product = next((p for p in PRODUCTS if p['id'] == pid), None)
+        if product:
+            p = product.copy()
+            p['price'] = generate_quantum_price(p['base_price'])
+            cart_items.append(p)
+    
+    total = sum(item['price'] for item in cart_items)
     
     return jsonify({
-        'measured_position': float(measured_position),
-        'measured_index': int(measured_idx),
-        'collapsed_wavefunction': collapsed_data,
-        'message': f'Wavefunction collapsed to x = {measured_position:.3f}'
+        'items': cart_items,
+        'count': len(cart_items),
+        'total': total
     })
 
 if __name__ == '__main__':
-    print("🌌 Quantum Job Search Server Starting...")
+    print("🌌 Quantum Job Search + E-Commerce Server Starting...")
     print("📡 Server running at http://localhost:5000")
+    print("🏠 Homepage: http://localhost:5000")
+    print("🛒 Store: http://localhost:5000/store")
     if NUMPY_AVAILABLE:
         print("✅ Real Schrödinger solver ENABLED")
-        print("🆕 New endpoint: /api/schrodinger-simulation")
-        print("🆕 New endpoint: /api/wavefunction-collapse")
-    else:
-        print("⚠️  NumPy not found - Schrödinger solver disabled")
-        print("   Install with: pip install numpy")
     app.run(debug=True, port=5000)

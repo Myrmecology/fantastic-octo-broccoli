@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Details - Quantum Store</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a0a2e 50%, #0a0a0a 100%);
+  color: white;
+  min-height: 100vh;
+}
+
+/* Navigation */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 20px 40px;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  border-bottom: 2px solid rgba(0, 255, 255, 0.2);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000;
+}
+
+.nav-brand {
+  font-size: 1.5em;
+  font-weight: bold;
+  background: linear-gradient(45deg, #00ffff, #ff00ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.nav-links {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+}
+
+.nav-link {
+  color: white;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  transition: all 0.3s;
+  border: 2px solid transparent;
+}
+
+.nav-link:hover {
+  border-color: #00ffff;
+  background: rgba(0, 255, 255, 0.1);
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+}
+
+.cart-icon {
+  position: relative;
+  font-size: 1.5em;
+  cursor: pointer;
+}
+
+.cart-count {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: #ff00ff;
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7em;
+  font-weight: bold;
+}
+
+/* Product Detail */
+.product-detail {
+  margin-top: 100px;
+  padding: 40px;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #00ffff;
+  text-decoration: none;
+  margin-bottom: 30px;
+  padding: 10px 20px;
+  border: 2px solid rgba(0, 255, 255, 0.3);
+  border-radius: 25px;
+  transition: all 0.3s;
+}
+
+.back-link:hover {
+  background: rgba(0, 255, 255, 0.1);
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+}
+
+.product-container {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 50px;
+  background: rgba(20, 20, 40, 0.6);
+  border: 2px solid rgba(0, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 50px;
+  box-shadow: 0 10px 50px rgba(0, 255, 255, 0.2);
+}
+
+.product-image-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-icon-large {
+  font-size: 12em;
+  margin-bottom: 30px;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+.product-category-large {
+  display: inline-block;
+  padding: 10px 30px;
+  background: rgba(255, 0, 255, 0.2);
+  border: 2px solid #ff00ff;
+  border-radius: 25px;
+  font-size: 1em;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.product-info-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.product-title {
+  font-size: 3em;
+  margin-bottom: 20px;
+  background: linear-gradient(45deg, #00ffff, #ff00ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.product-description-long {
+  font-size: 1.2em;
+  line-height: 1.8;
+  margin-bottom: 30px;
+  opacity: 0.9;
+}
+
+.product-price-section {
+  margin: 30px 0;
+  padding: 30px;
+  background: rgba(0, 255, 0, 0.05);
+  border: 2px solid rgba(0, 255, 0, 0.3);
+  border-radius: 15px;
+}
+
+.product-price-large {
+  font-size: 3.5em;
+  color: #00ff00;
+  font-weight: bold;
+  text-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+}
+
+.price-note {
+  font-size: 0.9em;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 10px;
+  font-style: italic;
+}
+
+.quantum-notice {
+  background: rgba(0, 255, 255, 0.1);
+  border-left: 4px solid #00ffff;
+  padding: 15px;
+  margin: 20px 0;
+  border-radius: 5px;
+}
+
+.features-section {
+  margin: 30px 0;
+}
+
+.features-title {
+  font-size: 1.8em;
+  color: #00ffff;
+  margin-bottom: 20px;
+}
+
+.features-list {
+  list-style: none;
+}
+
+.features-list li {
+  padding: 15px;
+  margin: 10px 0;
+  background: rgba(0, 255, 255, 0.05);
+  border-left: 3px solid #00ffff;
+  border-radius: 5px;
+  transition: all 0.3s;
+}
+
+.features-list li:hover {
+  background: rgba(0, 255, 255, 0.1);
+  transform: translateX(10px);
+}
+
+.features-list li::before {
+  content: '✓';
+  color: #00ff00;
+  font-weight: bold;
+  margin-right: 10px;
+  font-size: 1.2em;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 20px;
+  margin-top: 40px;
+}
+
+.btn {
+  flex: 1;
+  padding: 20px 40px;
+  border: none;
+  border-radius: 30px;
+  font-size: 1.2em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-add-cart {
+  background: linear-gradient(45deg, #00ffff, #0099ff);
+  color: white;
+}
+
+.btn-add-cart:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+}
+
+.btn-buy-now {
+  background: linear-gradient(45deg, #ff00ff, #ff0099);
+  color: white;
+}
+
+.btn-buy-now:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 30px rgba(255, 0, 255, 0.5);
+}
+
+/* Toast Notification */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: rgba(0, 255, 0, 0.9);
+  color: white;
+  padding: 20px 30px;
+  border-radius: 15px;
+  font-weight: bold;
+  box-shadow: 0 0 30px rgba(0, 255, 0, 0.5);
+  transform: translateX(400px);
+  transition: transform 0.3s;
+  z-index: 2000;
+}
+
+.toast.show {
+  transform: translateX(0);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .product-container {
+    grid-template-columns: 1fr;
+    padding: 30px;
+  }
+  
+  .product-icon-large {
+    font-size: 8em;
+  }
+  
+  .product-title {
+    font-size: 2em;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="navbar">
+  <div class="nav-brand">⚛️ Quantum Store</div>
+  <div class="nav-links">
+    <a href="/" class="nav-link">🏠 Home</a>
+    <a href="/store" class="nav-link">🛒 Store</a>
+    <a href="/cart" class="nav-link">
+      <span class="cart-icon">
+        🛒
+        <span class="cart-count" id="cartCount">0</span>
+      </span>
+    </a>
+  </div>
+</nav>
+
+<!-- Product Detail -->
+<div class="product-detail">
+  <a href="/store" class="back-link">← Back to Store</a>
+  
+  <div class="product-container">
+    <div class="product-image-section">
+      <div class="product-icon-large" id="productIcon">{{ product.image }}</div>
+      <span class="product-category-large" id="productCategory">{{ product.category }}</span>
+    </div>
+    
+    <div class="product-info-section">
+      <h1 class="product-title" id="productName">{{ product.name }}</h1>
+      
+      <p class="product-description-long" id="productDescription">
+        {{ product.description }}
+      </p>
+      
+      <div class="quantum-notice">
+        ⚛️ <strong>Quantum Notice:</strong> This product's price is influenced by real quantum mechanics simulations. 
+        The price you see exists in superposition until checkout is completed.
+      </div>
+      
+      <div class="product-price-section">
+        <div class="product-price-large" id="productPrice">Loading...</div>
+        <p class="price-note">*Price calculated from quantum entropy values</p>
+      </div>
+      
+      <div class="features-section">
+        <h3 class="features-title">✨ What's Included</h3>
+        <ul class="features-list" id="featuresList">
+          {% for feature in product.features %}
+          <li>{{ feature }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      
+      <div class="action-buttons">
+        <button class="btn btn-add-cart" onclick="addToCart()">
+          🛒 Add to Cart
+        </button>
+        <button class="btn btn-buy-now" onclick="buyNow()">
+          ⚡ Buy Now
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Notification -->
+<div class="toast" id="toast"></div>
+
+<script>
+const API_URL = 'http://localhost:5000/api';
+const productId = {{ product.id }};
+
+// Load current quantum price
+async function loadPrice() {
+  try {
+    const response = await fetch(`${API_URL}/product/${productId}`);
+    const data = await response.json();
+    
+    document.getElementById('productPrice').textContent = `$${data.price}`;
+    
+    console.log('Product price loaded:', data);
+  } catch (error) {
+    console.error('Failed to load price:', error);
+    document.getElementById('productPrice').textContent = '$---';
+  }
+}
+
+// Update cart count
+async function updateCartCount() {
+  try {
+    const response = await fetch(`${API_URL}/cart`);
+    const data = await response.json();
+    document.getElementById('cartCount').textContent = data.count || 0;
+  } catch (error) {
+    console.error('Failed to update cart count:', error);
+  }
+}
+
+// Add to cart
+async function addToCart() {
+  try {
+    const response = await fetch(`${API_URL}/cart`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'add', product_id: productId })
+    });
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      showToast('✅ Added to cart!');
+      updateCartCount();
+    }
+  } catch (error) {
+    console.error('Failed to add to cart:', error);
+    showToast('❌ Failed to add to cart');
+  }
+}
+
+// Buy now - add to cart and go to checkout
+async function buyNow() {
+  await addToCart();
+  setTimeout(() => {
+    window.location.href = '/checkout';
+  }, 500);
+}
+
+// Show toast notification
+function showToast(message) {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.classList.add('show');
+  
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 3000);
+}
+
+// Initialize
+loadPrice();
+updateCartCount();
+
+// Refresh price every 10 seconds (quantum state changes!)
+setInterval(loadPrice, 10000);
+</script>
+</body>
+</html>
