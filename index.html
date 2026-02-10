@@ -109,9 +109,145 @@ canvas { display:block; position:absolute; top:0; left:0; width:100%; height:100
 .close-btn:hover {
   color: #ff00ff;
 }
+/* NEW: Mode Toggle */
+.mode-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: rgba(0,0,0,0.7);
+  padding: 15px 25px;
+  border-radius: 50px;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255,255,255,0.2);
+}
+.mode-label {
+  color: white;
+  font-size: 0.9em;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.toggle-switch {
+  position: relative;
+  width: 60px;
+  height: 30px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.toggle-switch.active {
+  background: linear-gradient(45deg, #00ffff, #ff00ff);
+}
+.toggle-slider {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 24px;
+  height: 24px;
+  background: white;
+  border-radius: 50%;
+  transition: all 0.3s;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+.toggle-switch.active .toggle-slider {
+  transform: translateX(30px);
+}
+/* NEW: Stats Overlay */
+.stats-overlay {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  z-index: 999;
+  background: rgba(0,0,0,0.8);
+  padding: 20px;
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(0,255,255,0.3);
+  min-width: 300px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85em;
+  color: #00ffff;
+  display: none;
+}
+.stats-overlay.visible {
+  display: block;
+  animation: slideIn 0.3s ease-out;
+}
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+.stat-line {
+  margin: 8px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.stat-label {
+  color: rgba(255,255,255,0.7);
+}
+.stat-value {
+  color: #00ffff;
+  font-weight: bold;
+  text-shadow: 0 0 10px rgba(0,255,255,0.5);
+}
+.stat-value.fast {
+  color: #00ff00;
+}
+.stat-value.slow {
+  color: #ffff00;
+}
+.mode-indicator {
+  text-align: center;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-bottom: 2px solid rgba(0,255,255,0.3);
+  font-size: 1.1em;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+.mode-indicator.artistic {
+  color: #ff00ff;
+  text-shadow: 0 0 20px rgba(255,0,255,0.8);
+}
+.mode-indicator.scientific {
+  color: #00ffff;
+  text-shadow: 0 0 20px rgba(0,255,255,0.8);
+}
 </style>
 </head>
 <body>
+<!-- NEW: Mode Toggle Button -->
+<div class="mode-toggle">
+  <span class="mode-label" id="modeLabel">ARTISTIC</span>
+  <div class="toggle-switch" id="toggleSwitch" onclick="toggleMode()">
+    <div class="toggle-slider"></div>
+  </div>
+</div>
+
+<!-- NEW: Stats Overlay -->
+<div class="stats-overlay" id="statsOverlay">
+  <div class="mode-indicator artistic" id="modeIndicator">🎨 ARTISTIC MODE</div>
+  <div id="statsContent">
+    <div class="stat-line">
+      <span class="stat-label">Status:</span>
+      <span class="stat-value">Ready</span>
+    </div>
+  </div>
+</div>
+
 <canvas id="glcanvas"></canvas>
 <div class="ui">
   <input type="text" class="search-bar" id="searchInput" placeholder="Search quantum job multiverse..."><br>
@@ -274,6 +410,127 @@ window.addEventListener('resize',()=>{
 // Quantum API Integration
 const API_URL = 'http://localhost:5000/api';
 
+// NEW: Mode Management
+let currentMode = 'artistic'; // 'artistic' or 'scientific'
+
+function toggleMode() {
+    const toggleSwitch = document.getElementById('toggleSwitch');
+    const modeLabel = document.getElementById('modeLabel');
+    const modeIndicator = document.getElementById('modeIndicator');
+    const statsOverlay = document.getElementById('statsOverlay');
+    
+    // Toggle mode
+    currentMode = currentMode === 'artistic' ? 'scientific' : 'artistic';
+    
+    // Update UI
+    toggleSwitch.classList.toggle('active');
+    statsOverlay.classList.toggle('visible');
+    
+    if (currentMode === 'scientific') {
+        modeLabel.textContent = 'SCIENTIFIC';
+        modeIndicator.textContent = '🔬 SCIENTIFIC MODE';
+        modeIndicator.className = 'mode-indicator scientific';
+        
+        // Load Schrödinger simulation
+        loadSchrodingerSimulation();
+    } else {
+        modeLabel.textContent = 'ARTISTIC';
+        modeIndicator.textContent = '🎨 ARTISTIC MODE';
+        modeIndicator.className = 'mode-indicator artistic';
+        
+        // Load original quantum jobs
+        loadQuantumJobs();
+    }
+}
+
+function updateStatsOverlay(stats) {
+    const statsContent = document.getElementById('statsContent');
+    
+    if (currentMode === 'artistic') {
+        // Show artistic mode stats
+        statsContent.innerHTML = `
+            <div class="stat-line">
+                <span class="stat-label">🌌 Universes:</span>
+                <span class="stat-value">${stats.total_universes || 'N/A'}</span>
+            </div>
+            <div class="stat-line">
+                <span class="stat-label">⚡ Energy:</span>
+                <span class="stat-value">${stats.energy ? stats.energy.toFixed(3) : 'N/A'}</span>
+            </div>
+            <div class="stat-line">
+                <span class="stat-label">🔮 Entropy:</span>
+                <span class="stat-value">${stats.entropy ? stats.entropy.toFixed(3) : 'N/A'}</span>
+            </div>
+            <div class="stat-line">
+                <span class="stat-label">Mode:</span>
+                <span class="stat-value">Simplified</span>
+            </div>
+        `;
+    } else {
+        // Show scientific mode stats
+        const perf = stats.performance || {};
+        const simStats = stats.stats || {};
+        
+        statsContent.innerHTML = `
+            <div class="stat-line">
+                <span class="stat-label">🔬 Schrödinger Steps/sec:</span>
+                <span class="stat-value fast">${simStats.steps_per_second || 0}</span>
+            </div>
+            <div class="stat-line">
+                <span class="stat-label">⚙️ C++ Computation:</span>
+                <span class="stat-value fast">${perf.cpp_compilation_ms ? perf.cpp_compilation_ms.toFixed(2) : '0.00'}ms</span>
+            </div>
+            <div class="stat-line">
+                <span class="stat-label">🦀 Rust Async Tasks:</span>
+                <span class="stat-value">${perf.rust_async_tasks || 0} running</span>
+            </div>
+            <div class="stat-line">
+                <span class="stat-label">🧮 Total Time:</span>
+                <span class="stat-value slow">${simStats.total_time_ms ? simStats.total_time_ms.toFixed(2) : '0.00'}ms</span>
+            </div>
+            <div class="stat-line">
+                <span class="stat-label">📊 Entropy:</span>
+                <span class="stat-value">${simStats.entropy ? simStats.entropy.toFixed(3) : 'N/A'}</span>
+            </div>
+            <div class="stat-line">
+                <span class="stat-label">📏 Position Δx:</span>
+                <span class="stat-value">${simStats.position_uncertainty ? simStats.position_uncertainty.toFixed(3) : 'N/A'}</span>
+            </div>
+        `;
+    }
+}
+
+async function loadSchrodingerSimulation() {
+    try {
+        const response = await fetch(`${API_URL}/schrodinger-simulation`);
+        const data = await response.json();
+        
+        console.log('Schrödinger simulation loaded:', data);
+        
+        // Update stats overlay
+        updateStatsOverlay(data);
+        
+        // Update jobs based on quantum state
+        const container = document.getElementById('jobContainer');
+        container.innerHTML = `
+            <div class="job-card">🔬 Real quantum mechanics active</div>
+            <div class="job-card">Wavefunction evolving...</div>
+            <div class="job-card">Click to collapse!</div>
+        `;
+        
+        // TODO: In next step, we'll add wavefunction visualization
+        
+    } catch (error) {
+        console.error('Failed to load Schrödinger data:', error);
+        document.getElementById('statsContent').innerHTML = `
+            <div class="stat-line">
+                <span class="stat-label" style="color: #ff0000;">❌ Error:</span>
+                <span class="stat-value" style="color: #ff0000;">Server Error</span>
+            </div>
+        `;
+    }
+}
+
 async function loadQuantumJobs() {
     try {
         const response = await fetch(`${API_URL}/quantum-simulation`);
@@ -296,6 +553,15 @@ async function loadQuantumJobs() {
             🔮 Entropy: ${lastStat.entropy.toFixed(3)} | 
             🎯 Efficiency: ${(lastStat.efficiency * 100).toFixed(1)}%
         `;
+        
+        // Update stats overlay if visible
+        if (currentMode === 'artistic') {
+            updateStatsOverlay({
+                total_universes: data.total_universes,
+                energy: lastStat.energy,
+                entropy: lastStat.entropy
+            });
+        }
         
         console.log('Quantum simulation loaded:', data);
     } catch (error) {
@@ -338,8 +604,17 @@ document.getElementById('searchInput').addEventListener('input', (e) => {
 // Load on start
 loadQuantumJobs();
 
+// Show stats overlay by default
+document.getElementById('statsOverlay').classList.add('visible');
+
 // Reload every 10 seconds for new quantum states
-setInterval(loadQuantumJobs, 10000);
+setInterval(() => {
+    if (currentMode === 'artistic') {
+        loadQuantumJobs();
+    } else {
+        loadSchrodingerSimulation();
+    }
+}, 10000);
 
 // Modal functions
 function showJobDetails(jobTitle, idx) {
