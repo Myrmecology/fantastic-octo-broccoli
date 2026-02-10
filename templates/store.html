@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quantum Store</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a0a2e 50%, #0a0a0a 100%);
+  color: white;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Navigation */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 20px 40px;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  border-bottom: 2px solid rgba(0, 255, 255, 0.2);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000;
+}
+
+.nav-brand {
+  font-size: 1.5em;
+  font-weight: bold;
+  background: linear-gradient(45deg, #00ffff, #ff00ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.nav-links {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+}
+
+.nav-link {
+  color: white;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  transition: all 0.3s;
+  border: 2px solid transparent;
+}
+
+.nav-link:hover {
+  border-color: #00ffff;
+  background: rgba(0, 255, 255, 0.1);
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+}
+
+.cart-icon {
+  position: relative;
+  font-size: 1.5em;
+  cursor: pointer;
+}
+
+.cart-count {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: #ff00ff;
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7em;
+  font-weight: bold;
+}
+
+/* Hero Section */
+.hero {
+  margin-top: 80px;
+  padding: 60px 40px;
+  text-align: center;
+  background: linear-gradient(180deg, rgba(0, 255, 255, 0.1) 0%, transparent 100%);
+}
+
+.hero h1 {
+  font-size: 3.5em;
+  margin-bottom: 20px;
+  background: linear-gradient(45deg, #00ffff, #ff00ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: glow 2s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0%, 100% { text-shadow: 0 0 20px rgba(0, 255, 255, 0.5); }
+  50% { text-shadow: 0 0 40px rgba(255, 0, 255, 0.8); }
+}
+
+.hero p {
+  font-size: 1.3em;
+  opacity: 0.8;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Products Grid */
+.products-section {
+  padding: 40px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.section-title {
+  font-size: 2em;
+  margin-bottom: 30px;
+  text-align: center;
+  color: #00ffff;
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 30px;
+  padding: 20px 0;
+}
+
+.product-card {
+  background: rgba(20, 20, 40, 0.6);
+  border: 2px solid rgba(0, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 30px;
+  transition: all 0.3s;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.product-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+.product-card:hover::before {
+  left: 100%;
+}
+
+.product-card:hover {
+  transform: translateY(-10px);
+  border-color: #00ffff;
+  box-shadow: 0 10px 40px rgba(0, 255, 255, 0.3);
+}
+
+.product-icon {
+  font-size: 4em;
+  margin-bottom: 20px;
+  display: block;
+  text-align: center;
+}
+
+.product-name {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+  color: #00ffff;
+}
+
+.product-category {
+  display: inline-block;
+  padding: 5px 15px;
+  background: rgba(255, 0, 255, 0.2);
+  border: 1px solid #ff00ff;
+  border-radius: 15px;
+  font-size: 0.8em;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.product-description {
+  margin: 15px 0;
+  opacity: 0.8;
+  line-height: 1.6;
+}
+
+.product-price {
+  font-size: 2em;
+  color: #00ff00;
+  font-weight: bold;
+  margin: 20px 0;
+  text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+}
+
+.product-price-note {
+  font-size: 0.4em;
+  color: rgba(255, 255, 255, 0.5);
+  display: block;
+  margin-top: 5px;
+}
+
+.product-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn {
+  flex: 1;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 25px;
+  font-size: 1em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-primary {
+  background: linear-gradient(45deg, #00ffff, #0099ff);
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: #ff00ff;
+}
+
+/* Loading State */
+.loading {
+  text-align: center;
+  padding: 100px;
+  font-size: 1.5em;
+  color: #00ffff;
+}
+
+.loading::after {
+  content: '...';
+  animation: dots 1.5s steps(4, end) infinite;
+}
+
+@keyframes dots {
+  0%, 20% { content: '.'; }
+  40% { content: '..'; }
+  60%, 100% { content: '...'; }
+}
+
+/* Quantum Background Animation */
+.quantum-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.3;
+}
+
+.particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: #00ffff;
+  border-radius: 50%;
+  animation: float 20s infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  25% { transform: translateY(-100px) translateX(50px); }
+  50% { transform: translateY(-50px) translateX(-50px); }
+  75% { transform: translateY(-150px) translateX(30px); }
+}
+
+/* Notification Toast */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: rgba(0, 255, 0, 0.9);
+  color: white;
+  padding: 20px 30px;
+  border-radius: 15px;
+  font-weight: bold;
+  box-shadow: 0 0 30px rgba(0, 255, 0, 0.5);
+  transform: translateX(400px);
+  transition: transform 0.3s;
+  z-index: 2000;
+}
+
+.toast.show {
+  transform: translateX(0);
+}
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="navbar">
+  <div class="nav-brand">⚛️ Quantum Store</div>
+  <div class="nav-links">
+    <a href="/" class="nav-link">🏠 Home</a>
+    <a href="/store" class="nav-link">🛒 Store</a>
+    <a href="/cart" class="nav-link">
+      <span class="cart-icon">
+        🛒
+        <span class="cart-count" id="cartCount">0</span>
+      </span>
+    </a>
+  </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero">
+  <h1>🌌 Quantum-Powered Products</h1>
+  <p>Browse our catalog of quantum-generated digital products. Prices influenced by real quantum mechanics!</p>
+</section>
+
+<!-- Products Section -->
+<section class="products-section">
+  <h2 class="section-title">Featured Products</h2>
+  <div class="products-grid" id="productsGrid">
+    <div class="loading">Loading quantum products</div>
+  </div>
+</section>
+
+<!-- Quantum Background -->
+<div class="quantum-bg" id="quantumBg"></div>
+
+<!-- Toast Notification -->
+<div class="toast" id="toast"></div>
+
+<script>
+// Generate quantum background particles
+const quantumBg = document.getElementById('quantumBg');
+for (let i = 0; i < 50; i++) {
+  const particle = document.createElement('div');
+  particle.className = 'particle';
+  particle.style.left = Math.random() * 100 + '%';
+  particle.style.top = Math.random() * 100 + '%';
+  particle.style.animationDelay = Math.random() * 20 + 's';
+  particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+  quantumBg.appendChild(particle);
+}
+
+// API Integration
+const API_URL = 'http://localhost:5000/api';
+
+// Load cart count
+async function updateCartCount() {
+  try {
+    const response = await fetch(`${API_URL}/cart`);
+    const data = await response.json();
+    document.getElementById('cartCount').textContent = data.count || 0;
+  } catch (error) {
+    console.error('Failed to update cart count:', error);
+  }
+}
+
+// Load products
+async function loadProducts() {
+  try {
+    const response = await fetch(`${API_URL}/products`);
+    const data = await response.json();
+    
+    const grid = document.getElementById('productsGrid');
+    grid.innerHTML = data.products.map(product => `
+      <div class="product-card" onclick="viewProduct(${product.id})">
+        <span class="product-icon">${product.image}</span>
+        <span class="product-category">${product.category}</span>
+        <h3 class="product-name">${product.name}</h3>
+        <p class="product-description">${product.description}</p>
+        <div class="product-price">
+          $${product.price}
+          <span class="product-price-note">*Quantum-influenced pricing</span>
+        </div>
+        <div class="product-actions">
+          <button class="btn btn-primary" onclick="event.stopPropagation(); addToCart(${product.id})">
+            Add to Cart
+          </button>
+          <button class="btn btn-secondary" onclick="event.stopPropagation(); viewProduct(${product.id})">
+            View Details
+          </button>
+        </div>
+      </div>
+    `).join('');
+    
+    console.log('Products loaded:', data);
+  } catch (error) {
+    console.error('Failed to load products:', error);
+    document.getElementById('productsGrid').innerHTML = `
+      <div class="loading" style="color: #ff0000;">
+        ⚠️ Failed to load products. Make sure server is running!
+      </div>
+    `;
+  }
+}
+
+// Add to cart
+async function addToCart(productId) {
+  try {
+    const response = await fetch(`${API_URL}/cart`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'add', product_id: productId })
+    });
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      showToast('✅ Added to cart!');
+      updateCartCount();
+    }
+  } catch (error) {
+    console.error('Failed to add to cart:', error);
+    showToast('❌ Failed to add to cart');
+  }
+}
+
+// View product details
+function viewProduct(productId) {
+  window.location.href = `/product/${productId}`;
+}
+
+// Show toast notification
+function showToast(message) {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.classList.add('show');
+  
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 3000);
+}
+
+// Initialize
+loadProducts();
+updateCartCount();
+</script>
+</body>
+</html>
