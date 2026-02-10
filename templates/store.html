@@ -117,6 +117,71 @@ body {
   margin: 0 auto;
 }
 
+/* NEW: Gateway Button */
+.gateway-section {
+  margin-top: 40px;
+  padding: 30px;
+  background: rgba(255, 0, 255, 0.05);
+  border: 2px solid rgba(255, 0, 255, 0.3);
+  border-radius: 20px;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.gateway-label {
+  font-size: 1.1em;
+  margin-bottom: 15px;
+  color: #ff00ff;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.gateway-description {
+  font-size: 0.95em;
+  opacity: 0.7;
+  margin-bottom: 25px;
+  line-height: 1.6;
+}
+
+.gateway-button {
+  display: inline-block;
+  padding: 18px 50px;
+  background: linear-gradient(45deg, #ff00ff, #ff0099);
+  color: white;
+  text-decoration: none;
+  border-radius: 30px;
+  font-weight: bold;
+  font-size: 1.2em;
+  box-shadow: 0 0 30px rgba(255, 0, 255, 0.5);
+  transition: all 0.3s;
+  border: 2px solid rgba(255, 0, 255, 0.5);
+}
+
+.gateway-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 50px rgba(255, 0, 255, 0.8);
+  background: linear-gradient(45deg, #ff0099, #ff00ff);
+}
+
+.coming-soon-badge {
+  display: inline-block;
+  margin-left: 10px;
+  padding: 5px 15px;
+  background: rgba(255, 255, 0, 0.2);
+  border: 1px solid rgba(255, 255, 0, 0.5);
+  border-radius: 15px;
+  font-size: 0.6em;
+  vertical-align: middle;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
 /* Products Grid */
 .products-section {
   padding: 40px;
@@ -343,11 +408,29 @@ body {
 <section class="hero">
   <h1>🌌 Quantum-Powered Products</h1>
   <p>Browse our catalog of quantum-generated digital products. Prices influenced by real quantum mechanics!</p>
+  
+  <!-- NEW: Gateway to Professional Store -->
+  <div class="gateway-section">
+    <div class="gateway-label">
+      🚀 Professional Store Access
+      <span class="coming-soon-badge">BETA</span>
+    </div>
+    <p class="gateway-description">
+      Ready for the real deal? Our professional e-commerce platform features live API integrations, 
+      real payment processing, and production-grade features. Click below to enter!
+    </p>
+    <a href="http://localhost:5001" class="gateway-button" target="_blank">
+      Enter Professional Store →
+    </a>
+    <p style="margin-top: 15px; font-size: 0.85em; opacity: 0.5;">
+      Note: Professional store runs on port 5001. Make sure it's running!
+    </p>
+  </div>
 </section>
 
 <!-- Products Section -->
 <section class="products-section">
-  <h2 class="section-title">Featured Products</h2>
+  <h2 class="section-title">Featured Products (Demo)</h2>
   <div class="products-grid" id="productsGrid">
     <div class="loading">Loading quantum products</div>
   </div>
