@@ -154,6 +154,7 @@ class SchrodingerSolver:
 # NEW: Product Data
 # ---------------------------
 PRODUCTS = [
+    # Original Quantum Products (1-6)
     {
         'id': 1,
         'name': 'Quantum Coding Masterclass',
@@ -207,6 +208,287 @@ PRODUCTS = [
         'description': 'Connect to quantum APIs across realities',
         'features': ['Unlimited requests', '99.99% uptime (per universe)', 'WebSocket support'],
         'image': '🔌'
+    },
+    
+    # NEW Products (7-37)
+    {
+        'id': 7,
+        'name': 'Alabama Ball Cap',
+        'category': 'apparel',
+        'base_price': 29,
+        'description': 'Classic crimson ball cap with quantum-stitched logo',
+        'features': ['Adjustable fit', 'Breathable fabric', 'Roll Tide in all dimensions'],
+        'image': '🧢'
+    },
+    {
+        'id': 8,
+        'name': 'Custom Logo T-Shirt',
+        'category': 'apparel',
+        'base_price': 24,
+        'description': 'Personalized t-shirt with your logo printed across infinite timelines',
+        'features': ['100% cotton', 'Custom design', 'Quantum-fade resistant'],
+        'image': '👕'
+    },
+    {
+        'id': 9,
+        'name': 'Harvard University Hoodie',
+        'category': 'apparel',
+        'base_price': 68,
+        'description': 'Premium crimson hoodie from the multiverse\'s finest university',
+        'features': ['Officially licensed', 'Fleece-lined', 'Veritas across all realities'],
+        'image': '🧥'
+    },
+    {
+        'id': 10,
+        'name': 'Brown University Hoodie',
+        'category': 'apparel',
+        'base_price': 65,
+        'description': 'Comfortable Brown University hoodie with quantum warmth technology',
+        'features': ['Super soft fleece', 'Kangaroo pocket', 'Bruno the Bear approved'],
+        'image': '🧥'
+    },
+    {
+        'id': 11,
+        'name': 'Princeton University T-Shirt',
+        'category': 'apparel',
+        'base_price': 32,
+        'description': 'Classic orange and black tee from the Garden State\'s pride',
+        'features': ['Pre-shrunk fabric', 'Tiger mascot design', 'Ivy League certified'],
+        'image': '👕'
+    },
+    {
+        'id': 12,
+        'name': 'Yale University Sweatshirt',
+        'category': 'apparel',
+        'base_price': 58,
+        'description': 'Traditional Yale blue crew neck sweatshirt',
+        'features': ['Ribbed cuffs', 'Lux et Veritas embroidered', 'Handsome Dan edition'],
+        'image': '👔'
+    },
+    {
+        'id': 13,
+        'name': 'Cambridge University Hoodie',
+        'category': 'apparel',
+        'base_price': 72,
+        'description': 'Distinguished Cambridge light blue hoodie from across the pond',
+        'features': ['British quality', 'Boat race ready', 'Quantum rowing approved'],
+        'image': '🧥'
+    },
+    {
+        'id': 14,
+        'name': 'Stanford University Hoodie',
+        'category': 'apparel',
+        'base_price': 70,
+        'description': 'Cardinal red hoodie from Silicon Valley\'s academic powerhouse',
+        'features': ['Innovation guaranteed', 'Tree mascot pride', 'Startup founder approved'],
+        'image': '🧥'
+    },
+    {
+        'id': 15,
+        'name': 'Silver Pine State University Hoodie',
+        'category': 'apparel',
+        'base_price': 55,
+        'description': 'Exclusive Silver Pine State hoodie - show your school spirit!',
+        'features': ['Limited edition', 'Campus exclusive', 'Go Timber Wolves!'],
+        'image': '🧥'
+    },
+    {
+        'id': 16,
+        'name': 'Silver Pine State University Ball Cap',
+        'category': 'apparel',
+        'base_price': 25,
+        'description': 'Rep your Silver Pine State pride with this classic cap',
+        'features': ['Embroidered logo', 'Curved brim', 'Alumni approved'],
+        'image': '🧢'
+    },
+    {
+        'id': 17,
+        'name': 'Silver Pine State University Water Bottle',
+        'category': 'item',
+        'base_price': 18,
+        'description': 'Stay hydrated across all dimensions with official SPSU gear',
+        'features': ['32 oz capacity', 'BPA-free', 'Quantum insulation'],
+        'image': '💧'
+    },
+    {
+        'id': 18,
+        'name': 'Refurbished Sega Saturn',
+        'category': 'electronics',
+        'base_price': 249,
+        'description': 'Fully restored Sega Saturn console - relive the 90s in any universe',
+        'features': ['Tested and working', 'Includes controller', 'Plays across timelines'],
+        'image': '🎮'
+    },
+    {
+        'id': 19,
+        'name': 'Encyclopedia Of Calculus',
+        'category': 'book',
+        'base_price': 89,
+        'description': 'Comprehensive guide to calculus across infinite mathematical dimensions',
+        'features': ['1200 pages', 'All theorems included', 'Limit does not exist'],
+        'image': '📚'
+    },
+    {
+        'id': 20,
+        'name': 'Introduction to Molecular Biology',
+        'category': 'book',
+        'base_price': 125,
+        'description': 'Essential textbook for understanding life at the molecular level',
+        'features': ['Latest edition', 'Full-color diagrams', 'DNA helix poster included'],
+        'image': '📖'
+    },
+    {
+        'id': 21,
+        'name': 'Linear Algebra',
+        'category': 'book',
+        'base_price': 95,
+        'description': 'Master vectors, matrices, and transformations in n-dimensional space',
+        'features': ['Proof-based approach', '500+ exercises', 'Eigenvalue guaranteed'],
+        'image': '📕'
+    },
+    {
+        'id': 22,
+        'name': '200 Inch Television',
+        'category': 'electronics',
+        'base_price': 8999,
+        'description': 'Massive 200-inch 8K display - your living room becomes a theater',
+        'features': ['8K resolution', 'HDR support', 'Multiverse streaming ready'],
+        'image': '📺'
+    },
+    {
+        'id': 23,
+        'name': '400 Inch Television',
+        'category': 'electronics',
+        'base_price': 24999,
+        'description': 'Absurdly large 400-inch display - why not?',
+        'features': ['16K resolution', 'Requires reinforced wall', 'Visible from space'],
+        'image': '📺'
+    },
+    {
+        'id': 24,
+        'name': '2000 Inch Projection Screen',
+        'category': 'electronics',
+        'base_price': 4500,
+        'description': 'Commercial-grade projection screen for truly epic viewing',
+        'features': ['Motorized retractable', 'Matte white surface', 'IMAX at home'],
+        'image': '🎬'
+    },
+    {
+        'id': 25,
+        'name': 'Box Of Bubble Gum',
+        'category': 'item',
+        'base_price': 6,
+        'description': 'Classic bubble gum - 50 pieces of chewy quantum goodness',
+        'features': ['Sugar-free option', '50 pieces', 'Bubbles in any dimension'],
+        'image': '🍬'
+    },
+    {
+        'id': 26,
+        'name': 'Ethical Hacking Guide',
+        'category': 'book',
+        'base_price': 49,
+        'description': 'Learn penetration testing and security auditing the right way',
+        'features': ['Hands-on labs', 'Legal framework', 'Bug bounty tips'],
+        'image': '🔐'
+    },
+    {
+        'id': 27,
+        'name': '2002 Isuzu Trooper (Perfect Condition)',
+        'category': 'vehicle',
+        'base_price': 8500,
+        'description': 'Mint condition Isuzu Trooper - adventure ready across all timelines',
+        'features': ['4WD capability', '120k miles', 'Quantum rust-proofed'],
+        'image': '🚙'
+    },
+    {
+        'id': 28,
+        'name': 'Mystery Box',
+        'category': 'item',
+        'base_price': 99,
+        'description': 'Contains something from a random parallel universe - total surprise!',
+        'features': ['Unknown contents', 'Guaranteed value', 'Schrödinger approved'],
+        'image': '📦'
+    },
+    {
+        'id': 29,
+        'name': 'Strawberry Ice Cream',
+        'category': 'item',
+        'base_price': 8,
+        'description': 'Premium strawberry ice cream - one pint of frozen quantum bliss',
+        'features': ['Real strawberries', 'Hand-churned', 'Exists in superposition until opened'],
+        'image': '🍨'
+    },
+    {
+        'id': 30,
+        'name': 'Floor Lamp',
+        'category': 'item',
+        'base_price': 45,
+        'description': 'Modern LED floor lamp with adjustable brightness',
+        'features': ['Touch control', '3 brightness levels', 'Illuminates all dimensions'],
+        'image': '💡'
+    },
+    {
+        'id': 31,
+        'name': 'Computer Desk',
+        'category': 'item',
+        'base_price': 199,
+        'description': 'Ergonomic L-shaped computer desk with cable management',
+        'features': ['Spacious surface', 'Cable grommets', 'Quantum workspace optimized'],
+        'image': '🪑'
+    },
+    {
+        'id': 32,
+        'name': 'Just Cause 2 Video Game',
+        'category': 'electronics',
+        'base_price': 15,
+        'description': 'Classic open-world action game - chaos across parallel Panaus',
+        'features': ['PC digital code', 'Grappling hook included', 'Unlimited explosions'],
+        'image': '🎮'
+    },
+    {
+        'id': 33,
+        'name': 'Alternate Reality Vacation Package',
+        'category': 'experience',
+        'base_price': 24999,
+        'description': 'Two-week vacation to a parallel universe of your choice',
+        'features': ['Reality transport included', 'Hotel accommodations', 'Tour guide assistance'],
+        'image': '🌍'
+    },
+    {
+        'id': 34,
+        'name': 'Time Traveling Manual',
+        'category': 'book',
+        'base_price': 499,
+        'description': 'Comprehensive guide to temporal navigation and paradox prevention',
+        'features': ['Grandfather paradox solutions', 'Timeline repair kit', 'Flux capacitor diagram'],
+        'image': '⏰'
+    },
+    {
+        'id': 35,
+        'name': '22,000 Inch Television',
+        'category': 'electronics',
+        'base_price': 999999,
+        'description': 'The most ridiculous television ever conceived - nearly 2000 feet diagonal',
+        'features': ['Requires stadium', 'Resolution: YES', 'Installation not included'],
+        'image': '📺'
+    },
+    {
+        'id': 36,
+        'name': 'Brand New 747 Aircraft (Customize Your Jet)',
+        'category': 'vehicle',
+        'base_price': 350000000,
+        'description': 'Boeing 747-8 commercial aircraft - because why not?',
+        'features': ['Full customization', 'Pilot training included', 'Flies in all universes'],
+        'image': '✈️'
+    },
+    {
+        'id': 37,
+        'name': 'A Bottle Of Water',
+        'category': 'item',
+        'base_price': 3,
+        'description': 'Simple 16.9 oz bottle of purified water - hydration is important',
+        'features': ['H2O molecules', 'Quantum purified', 'BPA-free bottle'],
+        'image': '💧'
     }
 ]
 
