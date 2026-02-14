@@ -1,0 +1,317 @@
+# ========================================
+# HIGH SECURITY .gitignore
+# JUSTIN E-COMMERCE Professional Store
+# ========================================
+
+# ============ CRITICAL SECRETS ============
+# Environment variables and API keys
+.env
+.env.local
+.env.production
+.env.*.local
+*.env
+.flaskenv
+
+# API Keys and Secrets
+secrets/
+secrets.json
+config/secrets.py
+api_keys.txt
+credentials.json
+
+# Stripe API keys
+stripe_keys.txt
+.stripe/
+
+# SendGrid/Email API
+sendgrid.env
+email_config.json
+
+# ============ YUBIKEY SECURITY ============
+# YubiKey configuration and credentials
+*.yk
+yubikey/
+.yubikey/
+yubikey_config/
+yubico/
+.yubico/
+ykman/
+.ykman/
+
+# YubiKey PIV certificates
+*.pem
+*.crt
+*.key
+*.p12
+*.pfx
+
+# YubiKey OTP secrets
+otp_secrets.txt
+.otp/
+
+# YubiKey challenge-response
+challenge_response/
+.cr/
+
+# ============ DATABASE FILES ============
+# SQLite databases (contains customer data!)
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+*.db-shm
+*.db-wal
+
+# PostgreSQL
+*.pgsql
+*.postgres
+pgdata/
+
+# Database backups
+*.sql.backup
+*.dump
+backups/
+db_backups/
+
+# ============ PYTHON ============
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+pythonenv/
+
+# Distribution / packaging
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# ============ FLASK SPECIFIC ============
+instance/
+.webassets-cache
+.flask_session/
+flask_session/
+
+# ============ LOGS ============
+*.log
+logs/
+*.log.*
+log/
+error.log
+access.log
+debug.log
+
+# ============ OPERATING SYSTEM ============
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.directory
+.Trash-*
+
+# ============ IDE / EDITORS ============
+# VS Code
+.vscode/
+.history/
+*.code-workspace
+
+# PyCharm
+.idea/
+*.iml
+*.iws
+.idea_modules/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+.netrwhist
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# ============ NODE (if using Node tools) ============
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# ============ CUSTOMER DATA ============
+# Customer information (GDPR/Privacy)
+customer_data/
+user_data/
+orders/
+order_exports/
+customer_exports/
+*.csv
+*.xlsx
+*.xls
+
+# Email lists
+email_lists/
+mailing_lists/
+
+# ============ PAYMENT DATA ============
+# Never commit payment information
+payment_logs/
+transaction_logs/
+stripe_webhooks.log
+payment_test_data/
+
+# ============ UPLOADS ============
+# User uploaded files
+uploads/
+user_uploads/
+temp_uploads/
+static/uploads/
+
+# ============ TEMPORARY FILES ============
+tmp/
+temp/
+*.tmp
+*.temp
+.temporary/
+
+# ============ CACHE ============
+.cache/
+*.cache
+__pycache__/
+.sass-cache/
+
+# ============ DOCKER (if used) ============
+docker-compose.override.yml
+.dockerignore
+
+# ============ SSL/TLS CERTIFICATES ============
+# Never commit certificates
+*.cert
+*.cer
+*.der
+*.csr
+ssl/
+certs/
+certificates/
+
+# ============ SESSION DATA ============
+# Flask sessions
+flask_session/
+sessions/
+*.session
+
+# ============ MISC SECURITY ============
+# SSH keys
+*.ssh/
+id_rsa
+id_rsa.pub
+known_hosts
+
+# GPG keys
+*.gpg
+*.asc
+.gnupg/
+
+# Password files
+passwords.txt
+.passwords/
+auth/
+
+# Tokens
+*.token
+tokens/
+.tokens/
+
+# ============ BACKUPS ============
+*.bak
+*.backup
+*.old
+*.orig
+*-old
+*-backup
+
+# ============ TEST DATA ============
+test_data/
+mock_data/
+fixtures/sensitive/
+
+# ============ DOCUMENTATION WITH KEYS ============
+# Docs that might contain secrets
+KEYS.md
+SECRETS.md
+PRIVATE.md
+DO_NOT_COMMIT.md
+
+# ============ KEEP THESE (negative patterns) ============
+# These are explicitly KEPT in version control
+!.gitignore
+!.env.example
+!README.md
+!requirements.txt
+!database/schema.sql
+
+# ========================================
+# END OF .gitignore
+# Last Updated: February 2026
+# Security Level: MAXIMUM
+# ========================================
