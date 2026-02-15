@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}500 - Server Error{% endblock %}
+{% block content %}
+<div style="text-align: center; padding: 4rem 2rem; color: var(--chrome);">
+    <h1 style="font-size: 4rem;">500</h1>
+    <h2>Server Error</h2>
+    <p style="margin: 2rem 0;">Something went wrong on our end.</p>
+    <a href="{{ url_for('store.landing') }}" class="btn-primary">Return Home</a>
+</div>
+{% endblock %}

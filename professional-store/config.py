@@ -19,15 +19,18 @@ class Config:
     PORT = int(os.getenv('PORT', 5001))
     
     # ============ DATABASE ============
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'sqlite:///database/store.db')
+    # Get absolute path for database (Windows compatible)
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', f'sqlite:///{os.path.join(basedir, "database", "store.db")}')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = False
     
     # ============ SESSION ============
     SESSION_TYPE = 'filesystem'
     SESSION_PERMANENT = False
-    SESSION_USE_SIGNER = True
+    SESSION_USE_SIGNER = False
     SESSION_KEY_PREFIX = 'justin_ecommerce_'
+    SESSION_SERIALIZATION_FORMAT = 'json'  # Fix for Werkzeug 3.1.5
     
     # ============ STRIPE ============
     STRIPE_PUBLISHABLE_KEY = os.getenv('STRIPE_PUBLISHABLE_KEY', '')

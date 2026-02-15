@@ -4,15 +4,15 @@
 
 from flask_sqlalchemy import SQLAlchemy
 
-# Initialize SQLAlchemy instance
+# Create single db instance
 db = SQLAlchemy()
 
-# Import all models
+# Import models (must be after db is created)
 from models.product import Product
 from models.order import Order, OrderItem
 from models.user import User, Cart
 
-# Export all models
+# Export all
 __all__ = [
     'db',
     'Product',

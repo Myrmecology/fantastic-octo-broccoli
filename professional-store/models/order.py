@@ -3,11 +3,9 @@
 # ========================================
 
 from datetime import datetime
-from flask_sqlalchemy import SQLAlchemy
+from models import db
 import secrets
 import string
-
-db = SQLAlchemy()
 
 class Order(db.Model):
     """Order model for customer purchases"""
