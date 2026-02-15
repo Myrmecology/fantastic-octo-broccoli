@@ -1,0 +1,337 @@
+/* ========================================
+   JUSTIN E-COMMERCE - Main Stylesheet
+   Color Scheme: Blue, Silver, Dark Crimson
+   ======================================== */
+
+/* ============ CSS VARIABLES ============ */
+:root {
+    /* Blues - Various Shades */
+    --midnight-blue: #0f1c2e;
+    --ocean-blue: #1e3a5f;
+    --sky-blue: #2e5c8a;
+    --bright-blue: #4a90e2;
+    --electric-blue: #5dade2;
+    
+    /* Silvers - Metallic */
+    --silver-light: #c0c5ce;
+    --silver: #a8adb5;
+    --silver-dark: #8b92a0;
+    --chrome: #e8eaed;
+    
+    /* Crimsons - Dark Red Accents */
+    --dark-crimson: #8b0000;
+    --crimson: #a52a2a;
+    --crimson-hover: #c41e3a;
+    
+    /* Glass Effects */
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    
+    /* Shadows */
+    --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 5px 20px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* ============ RESET & BASE ============ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, var(--midnight-blue) 0%, var(--ocean-blue) 50%, var(--sky-blue) 100%);
+    background-attachment: fixed;
+    color: var(--chrome);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+/* ============ NAVIGATION BAR ============ */
+.navbar {
+    background: rgba(15, 28, 46, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 2px solid var(--glass-border);
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: var(--shadow-md);
+}
+
+.nav-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-brand a {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--chrome);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s;
+}
+
+.nav-brand a:hover {
+    color: var(--electric-blue);
+    transform: scale(1.05);
+}
+
+.nav-links {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+.nav-link {
+    color: var(--silver-light);
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    transition: all 0.3s;
+    font-weight: 500;
+}
+
+.nav-link:hover {
+    color: var(--chrome);
+    background: var(--glass-bg);
+}
+
+/* CRITICAL: Back to Quantum Home Button */
+.back-link {
+    color: var(--electric-blue) !important;
+    border: 2px solid var(--electric-blue);
+    padding: 0.5rem 1.5rem !important;
+    border-radius: 25px;
+    font-weight: bold;
+}
+
+.back-link:hover {
+    background: var(--electric-blue);
+    color: var(--midnight-blue) !important;
+    box-shadow: 0 0 20px rgba(93, 173, 226, 0.5);
+    transform: translateY(-2px);
+}
+
+.cart-link {
+    position: relative;
+}
+
+.cart-count {
+    background: var(--crimson);
+    color: white;
+    border-radius: 50%;
+    padding: 0.2rem 0.5rem;
+    font-size: 0.8rem;
+    margin-left: 0.5rem;
+    font-weight: bold;
+}
+
+/* ============ MAIN CONTENT ============ */
+.main-content {
+    min-height: calc(100vh - 200px);
+    padding: 2rem 0;
+}
+
+/* ============ BUTTONS ============ */
+.btn-primary,
+.btn-checkout,
+.btn-place-order {
+    background: linear-gradient(135deg, var(--bright-blue), var(--electric-blue));
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 30px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-primary:hover,
+.btn-checkout:hover,
+.btn-place-order:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(74, 144, 226, 0.4);
+}
+
+.btn-secondary,
+.btn-continue {
+    background: transparent;
+    color: var(--silver-light);
+    border: 2px solid var(--silver);
+    padding: 0.8rem 1.5rem;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-secondary:hover,
+.btn-continue:hover {
+    background: var(--glass-bg);
+    border-color: var(--chrome);
+    color: var(--chrome);
+}
+
+.btn-danger,
+.btn-clear,
+.btn-remove {
+    background: var(--dark-crimson);
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-danger:hover,
+.btn-clear:hover,
+.btn-remove:hover {
+    background: var(--crimson-hover);
+    transform: scale(1.05);
+}
+
+/* ============ CARDS ============ */
+.card {
+    background: rgba(30, 58, 95, 0.6);
+    backdrop-filter: blur(10px);
+    border: 2px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 2rem;
+    transition: all 0.3s;
+}
+
+.card:hover {
+    border-color: var(--electric-blue);
+    box-shadow: 0 10px 30px rgba(93, 173, 226, 0.3);
+    transform: translateY(-5px);
+}
+
+/* ============ FOOTER ============ */
+.footer {
+    background: rgba(15, 28, 46, 0.95);
+    border-top: 2px solid var(--glass-border);
+    padding: 3rem 0 1rem;
+    margin-top: 4rem;
+}
+
+.footer-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.footer-section h3,
+.footer-section h4 {
+    color: var(--electric-blue);
+    margin-bottom: 1rem;
+}
+
+.footer-section p,
+.footer-section a {
+    color: var(--silver-light);
+    text-decoration: none;
+    line-height: 2;
+}
+
+.footer-section a:hover {
+    color: var(--chrome);
+}
+
+.footer-section ul {
+    list-style: none;
+}
+
+.footer-tagline {
+    color: var(--crimson);
+    font-weight: bold;
+    margin-top: 0.5rem;
+}
+
+/* ============ NOTIFICATIONS ============ */
+.notification {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    background: rgba(30, 58, 95, 0.95);
+    backdrop-filter: blur(10px);
+    border: 2px solid var(--electric-blue);
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 15px;
+    box-shadow: var(--shadow-lg);
+    transform: translateX(400px);
+    transition: all 0.3s;
+    z-index: 9999;
+}
+
+.notification.show {
+    transform: translateX(0);
+}
+
+.notification-error {
+    border-color: var(--crimson);
+}
+
+/* ============ LOADING SPINNER ============ */
+.spinner {
+    border: 3px solid var(--glass-border);
+    border-top: 3px solid var(--electric-blue);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 768px) {
+    .nav-container {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .nav-links {
+        flex-direction: column;
+        gap: 1rem;
+        width: 100%;
+    }
+    
+    .footer-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ========================================
+   END OF MAIN STYLESHEET
+   ======================================== */
