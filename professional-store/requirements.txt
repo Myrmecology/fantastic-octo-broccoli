@@ -1,0 +1,39 @@
+# ========================================
+# JUSTIN E-COMMERCE - Python Dependencies
+# ========================================
+
+# ============ CORE FRAMEWORK ============
+Flask==3.0.0
+Werkzeug==3.0.1
+
+# ============ DATABASE ============
+Flask-SQLAlchemy==3.1.1
+SQLAlchemy==2.0.23
+
+# ============ PAYMENTS ============
+stripe==7.8.0
+
+# ============ EMAIL ============
+sendgrid==6.11.0
+
+# ============ FORMS & VALIDATION ============
+Flask-WTF==1.2.1
+WTForms==3.1.1
+email-validator==2.1.0
+
+# ============ SESSIONS ============
+Flask-Session==0.5.0
+
+# ============ ENVIRONMENT VARIABLES ============
+python-dotenv==1.0.0
+
+# ============ DATE/TIME ============
+python-dateutil==2.8.2
+
+# ============ UTILITIES ============
+requests==2.31.0
+
+# ========================================
+# Total: 13 essential packages
+# Install with: pip install -r requirements.txt
+# ========================================
