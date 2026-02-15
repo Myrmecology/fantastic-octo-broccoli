@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block title %}Shopping Cart - JUSTIN E-COMMERCE{% endblock %}
+
+{% block content %}
+<div class="cart-container">
+    <h1 class="cart-title">Shopping Cart</h1>
+    
+    {% if cart_items %}
+    <!-- Cart Items -->
+    <div class="cart-content">
+        <div class="cart-items">
+            {% for item in cart_items %}
+            <div class="cart-item" id="cart-item-{{ item.id }}">
+                <div class="cart-item-image">
+                    {% if item.product.image_url %}
+                    <img src="{{ item.product.image_url }}" alt="{{ item.product.name }}">
+                    {% else %}
+                    <div class="cart-image-placeholder">📦</div>
+                    {% endif %}
+                </div>
+                
+                <div class="cart-item-details">
+                    <h3>{{ item.product.name }}</h3>
+                    <p class="cart-item-category">{{ item.product.category }}</p>
+                    <p class="cart-item-price">{{ item.product.get_price_formatted() }} each</p>
+                </div>
+                
+                <div class="cart-item-quantity">
+                    <label>Quantity:</label>
+                    <div class="quantity-controls">
+                        <button class="qty-btn" onclick="updateQuantity({{ item.id }}, {{ item.quantity - 1 }})">−</button>
+                        <input type="number" value="{{ item.quantity }}" min="1" max="{{ item.product.stock }}" readonly>
+                        <button class="qty-btn" onclick="updateQuantity({{ item.id }}, {{ item.quantity + 1 }})">+</button>
+                    </div>
+                </div>
+                
+                <div class="cart-item-total">
+                    <p class="item-subtotal">${{ (item.get_subtotal() / 100)|round(2) }}</p>
+                    <button class="btn-remove" onclick="removeItem({{ item.id }})">🗑️ Remove</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Cart Summary -->
+        <div class="cart-summary">
+            <h2>Order Summary</h2>
+            
+            <div class="summary-row">
+                <span>Subtotal:</span>
+                <span class="summary-value">${{ (subtotal / 100)|round(2) }}</span>
+            </div>
+            
+            <div class="summary-row">
+                <span>Tax (8.25%):</span>
+                <span class="summary-value">${{ (tax / 100)|round(2) }}</span>
+            </div>
+            
+            <div class="summary-row">
+                <span>Shipping:</span>
+                <span class="summary-value">${{ (shipping / 100)|round(2) }}</span>
+            </div>
+            
+            <div class="summary-divider"></div>
+            
+            <div class="summary-row summary-total">
+                <span>Total:</span>
+                <span class="summary-value">${{ (total / 100)|round(2) }}</span>
+            </div>
+            
+            <div class="summary-actions">
+                <a href="{{ url_for('checkout.checkout') }}" class="btn-checkout">
+                    Proceed to Checkout
+                </a>
+                <a href="{{ url_for('store.store') }}" class="btn-continue">
+                    Continue Shopping
+                </a>
+                <button class="btn-clear" onclick="clearCart()">
+                    Clear Cart
+                </button>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <!-- Empty Cart -->
+    <div class="empty-cart">
+        <div class="empty-cart-icon">🛒</div>
+        <h2>Your cart is empty</h2>
+        <p>Add some products to get started!</p>
+        <a href="{{ url_for('store.store') }}" class="btn-shop-now">
+            Start Shopping
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function updateQuantity(cartItemId, newQuantity) {
+        if (newQuantity < 1) {
+            removeItem(cartItemId);
+            return;
+        }
+        
+        fetch('/cart/update', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                cart_item_id: cartItemId,
+                quantity: newQuantity
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Reload page to update totals
+                location.reload();
+            } else {
+                showNotification('❌ Error: ' + data.error, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('❌ Error updating cart', 'error');
+        });
+    }
+    
+    function removeItem(cartItemId) {
+        if (!confirm('Remove this item from cart?')) {
+            return;
+        }
+        
+        fetch(`/cart/remove/${cartItemId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Remove item from DOM
+                document.getElementById(`cart-item-${cartItemId}`).remove();
+                
+                // Reload if no items left
+                if (document.querySelectorAll('.cart-item').length === 0) {
+                    location.reload();
+                } else {
+                    location.reload(); // Reload to update totals
+                }
+            } else {
+                showNotification('❌ Error: ' + data.error, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('❌ Error removing item', 'error');
+        });
+    }
+    
+    function clearCart() {
+        if (!confirm('Clear all items from cart?')) {
+            return;
+        }
+        
+        fetch('/cart/clear', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                showNotification('❌ Error: ' + data.error, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('❌ Error clearing cart', 'error');
+        });
+    }
+    
+    function showNotification(message, type = 'success') {
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.classList.add('show');
+        }, 10);
+        
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+</script>
+{% endblock %}

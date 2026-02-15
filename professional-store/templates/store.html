@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+
+{% block title %}Shop - JUSTIN E-COMMERCE{% endblock %}
+
+{% block content %}
+<div class="store-container">
+    <!-- Store Header -->
+    <div class="store-header">
+        <h1>Premium Products</h1>
+        <p>Discover our curated collection of quality items</p>
+    </div>
+    
+    <!-- Filters and Search -->
+    <div class="store-controls">
+        <div class="search-box">
+            <input 
+                type="text" 
+                id="searchInput" 
+                placeholder="Search products..." 
+                value="{{ search_query or '' }}"
+            >
+            <button id="searchButton">🔍 Search</button>
+        </div>
+        
+        <div class="filter-sort">
+            <!-- Category Filter -->
+            <select id="categoryFilter" class="filter-select">
+                <option value="">All Categories</option>
+                {% for category in categories %}
+                <option value="{{ category }}" {% if selected_category == category %}selected{% endif %}>
+                    {{ category }}
+                </option>
+                {% endfor %}
+            </select>
+            
+            <!-- Sort Options -->
+            <select id="sortSelect" class="filter-select">
+                <option value="featured" {% if sort_by == 'featured' %}selected{% endif %}>Featured</option>
+                <option value="price_low" {% if sort_by == 'price_low' %}selected{% endif %}>Price: Low to High</option>
+                <option value="price_high" {% if sort_by == 'price_high' %}selected{% endif %}>Price: High to Low</option>
+                <option value="name" {% if sort_by == 'name' %}selected{% endif %}>Name: A-Z</option>
+            </select>
+        </div>
+    </div>
+    
+    <!-- Product Grid -->
+    <div class="products-grid">
+        {% if products %}
+            {% for product in products %}
+            <div class="product-card" data-category="{{ product.category }}">
+                <div class="product-image-container">
+                    {% if product.image_url %}
+                    <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-image">
+                    {% else %}
+                    <div class="product-image-placeholder">📦</div>
+                    {% endif %}
+                    
+                    {% if product.featured %}
+                    <span class="featured-badge">⭐ Featured</span>
+                    {% endif %}
+                    
+                    {% if product.stock < 10 and product.stock > 0 %}
+                    <span class="low-stock-badge">Only {{ product.stock }} left!</span>
+                    {% elif product.stock == 0 %}
+                    <span class="out-stock-badge">Out of Stock</span>
+                    {% endif %}
+                </div>
+                
+                <div class="product-info">
+                    <h3 class="product-name">{{ product.name }}</h3>
+                    <p class="product-category">{{ product.category }}</p>
+                    <p class="product-description">{{ product.description[:80] }}...</p>
+                    
+                    <div class="product-footer">
+                        <div class="product-price">{{ product.get_price_formatted() }}</div>
+                        <div class="product-actions">
+                            <a href="{{ url_for('store.product_detail', product_id=product.id) }}" class="btn-view">
+                                View Details
+                            </a>
+                            {% if product.is_in_stock() %}
+                            <button class="btn-add-cart" onclick="addToCart({{ product.id }})">
+                                Add to Cart
+                            </button>
+                            {% else %}
+                            <button class="btn-add-cart btn-disabled" disabled>
+                                Out of Stock
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-products">
+                <p>No products found</p>
+                <a href="{{ url_for('store.store') }}" class="btn-primary">View All Products</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/cart.js') }}"></script>
+<script>
+    // Search functionality
+    document.getElementById('searchButton').addEventListener('click', function() {
+        performSearch();
+    });
+    
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            performSearch();
+        }
+    });
+    
+    function performSearch() {
+        const query = document.getElementById('searchInput').value.trim();
+        const category = document.getElementById('categoryFilter').value;
+        const sort = document.getElementById('sortSelect').value;
+        
+        let url = '/store?';
+        if (query) url += `search=${encodeURIComponent(query)}&`;
+        if (category) url += `category=${encodeURIComponent(category)}&`;
+        if (sort) url += `sort=${encodeURIComponent(sort)}`;
+        
+        window.location.href = url;
+    }
+    
+    // Category filter
+    document.getElementById('categoryFilter').addEventListener('change', function() {
+        performSearch();
+    });
+    
+    // Sort options
+    document.getElementById('sortSelect').addEventListener('change', function() {
+        performSearch();
+    });
+    
+    // Add to cart function
+    function addToCart(productId) {
+        fetch('/cart/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                product_id: productId,
+                quantity: 1
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update cart count
+                document.getElementById('cartCount').textContent = data.cart_count;
+                
+                // Show success message
+                showNotification('✅ Product added to cart!');
+            } else {
+                showNotification('❌ Error: ' + data.error, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('❌ Error adding to cart', 'error');
+        });
+    }
+    
+    // Notification function
+    function showNotification(message, type = 'success') {
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.classList.add('show');
+        }, 10);
+        
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+</script>
+{% endblock %}

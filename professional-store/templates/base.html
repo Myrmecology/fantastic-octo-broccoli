@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="JUSTIN E-COMMERCE - Premium online shopping experience">
+    <title>{% block title %}JUSTIN E-COMMERCE{% endblock %}</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+    {% block extra_css %}{% endblock %}
+    
+    <!-- Stripe.js (for payments) -->
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <!-- Logo/Brand -->
+            <div class="nav-brand">
+                <a href="{{ url_for('store.landing') }}">
+                    🏪 <span>JUSTIN E-COMMERCE</span>
+                </a>
+            </div>
+            
+            <!-- Navigation Links -->
+            <div class="nav-links">
+                <!-- CRITICAL: Back to Quantum Home -->
+                <a href="{{ quantum_url }}" class="nav-link back-link" title="Return to Quantum Project">
+                    ← Back to Quantum Home
+                </a>
+                
+                <a href="{{ url_for('store.store') }}" class="nav-link">
+                    Products
+                </a>
+                
+                <a href="{{ url_for('cart.view_cart') }}" class="nav-link cart-link">
+                    🛒 Cart <span class="cart-count" id="cartCount">0</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>JUSTIN E-COMMERCE</h3>
+                <p>Sit back and enjoy an easy to use site for all your shopping needs.</p>
+                <p class="footer-tagline">The more you spend, the richer I get. 💰</p>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="{{ url_for('store.store') }}">Shop</a></li>
+                    <li><a href="{{ url_for('cart.view_cart') }}">Cart</a></li>
+                    <li><a href="{{ quantum_url }}">Quantum Project</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Connect</h4>
+                <p>Email: store@justinecommerce.com</p>
+                <p>&copy; 2026 JUSTIN E-COMMERCE</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- JavaScript -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+    
+    <!-- Update cart count on page load -->
+    <script>
+        // Fetch and update cart count
+        fetch('/api/cart/count')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('cartCount').textContent = data.count;
+            })
+            .catch(error => console.error('Error loading cart count:', error));
+    </script>
+</body>
+</html>

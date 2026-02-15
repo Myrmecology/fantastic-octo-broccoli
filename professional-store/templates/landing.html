@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}JUSTIN E-COMMERCE - Welcome{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
+{% endblock %}
+
+{% block content %}
+<!-- Landing Page Hero -->
+<div class="landing-hero">
+    <!-- Background overlay -->
+    <div class="hero-overlay"></div>
+    
+    <!-- Floating cart icons -->
+    <div class="floating-icons">
+        <div class="cart-icon cart-1">🛒</div>
+        <div class="cart-icon cart-2">🛒</div>
+        <div class="cart-icon cart-3">🛒</div>
+        <div class="cart-icon cart-4">🛒</div>
+        <div class="cart-icon cart-5">🛒</div>
+    </div>
+    
+    <!-- Frosted glass search bar -->
+    <div class="hero-search-container">
+        <div class="hero-search-bar">
+            <input 
+                type="text" 
+                id="heroSearch" 
+                placeholder="Search for products..."
+                class="hero-search-input"
+            >
+            <button class="hero-search-button">🔍</button>
+        </div>
+    </div>
+    
+    <!-- Main branding -->
+    <div class="hero-content">
+        <h1 class="hero-title">JUSTIN</h1>
+        <h2 class="hero-subtitle">E-COMMERCE</h2>
+        
+        <!-- Mission statement (subtle) -->
+        <p class="hero-mission">
+            Sit back and enjoy an easy to use site for all your shopping needs.<br>
+            <span class="mission-tagline">If you feel like you can't afford it, that's okay.<br>
+            JUSTIN E-COMMERCE is here to make you go broke.</span>
+        </p>
+        
+        <!-- Enter store button -->
+        <a href="{{ url_for('store.store') }}" class="hero-cta">
+            Start Shopping
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Hero search functionality
+    document.getElementById('heroSearch').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            const query = this.value.trim();
+            if (query) {
+                window.location.href = `/store?search=${encodeURIComponent(query)}`;
+            }
+        }
+    });
+    
+    document.querySelector('.hero-search-button').addEventListener('click', function() {
+        const query = document.getElementById('heroSearch').value.trim();
+        if (query) {
+            window.location.href = `/store?search=${encodeURIComponent(query)}`;
+        }
+    });
+    
+    // Animate floating carts on scroll/mouse
+    document.addEventListener('mousemove', function(e) {
+        const icons = document.querySelectorAll('.cart-icon');
+        icons.forEach((icon, index) => {
+            const speed = (index + 1) * 0.02;
+            const x = (e.clientX * speed) / 50;
+            const y = (e.clientY * speed) / 50;
+            icon.style.transform = `translate(${x}px, ${y}px)`;
+        });
+    });
+</script>
+{% endblock %}

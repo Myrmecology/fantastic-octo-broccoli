@@ -1,0 +1,281 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout - JUSTIN E-COMMERCE{% endblock %}
+
+{% block content %}
+<div class="checkout-container">
+    <h1 class="checkout-title">Checkout</h1>
+    
+    <div class="checkout-content">
+        <!-- Order Summary (Left Side) -->
+        <div class="checkout-summary">
+            <h2>Order Summary</h2>
+            
+            <div class="checkout-items">
+                {% for item in cart_items %}
+                <div class="checkout-item">
+                    <div class="checkout-item-info">
+                        <strong>{{ item.product.name }}</strong>
+                        <span>× {{ item.quantity }}</span>
+                    </div>
+                    <div class="checkout-item-price">
+                        ${{ (item.get_subtotal() / 100)|round(2) }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="checkout-totals">
+                <div class="total-row">
+                    <span>Subtotal:</span>
+                    <span>${{ (subtotal / 100)|round(2) }}</span>
+                </div>
+                <div class="total-row">
+                    <span>Tax:</span>
+                    <span>${{ (tax / 100)|round(2) }}</span>
+                </div>
+                <div class="total-row">
+                    <span>Shipping:</span>
+                    <span>${{ (shipping / 100)|round(2) }}</span>
+                </div>
+                <div class="total-divider"></div>
+                <div class="total-row total-final">
+                    <span>Total:</span>
+                    <span>${{ (total / 100)|round(2) }}</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Checkout Form (Right Side) -->
+        <div class="checkout-form-container">
+            <form id="checkoutForm">
+                <!-- Customer Information -->
+                <div class="form-section">
+                    <h3>Contact Information</h3>
+                    
+                    <div class="form-group">
+                        <label for="name">Full Name *</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Phone</label>
+                        <input type="tel" id="phone" name="phone">
+                    </div>
+                </div>
+                
+                <!-- Shipping Address -->
+                <div class="form-section">
+                    <h3>Shipping Address</h3>
+                    
+                    <div class="form-group">
+                        <label for="address">Street Address *</label>
+                        <input type="text" id="address" name="address" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="city">City *</label>
+                            <input type="text" id="city" name="city" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="state">State *</label>
+                            <input type="text" id="state" name="state" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="zip">ZIP Code *</label>
+                            <input type="text" id="zip" name="zip" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Payment Information -->
+                <div class="form-section">
+                    <h3>Payment Information</h3>
+                    <p class="payment-secure">🔒 Secure payment powered by Stripe</p>
+                    
+                    <!-- Stripe Card Element -->
+                    <div class="form-group">
+                        <label>Card Details *</label>
+                        <div id="card-element" class="stripe-element"></div>
+                        <div id="card-errors" class="card-errors"></div>
+                    </div>
+                </div>
+                
+                <!-- Submit Button -->
+                <button type="submit" id="submitButton" class="btn-place-order">
+                    <span id="buttonText">Place Order - ${{ (total / 100)|round(2) }}</span>
+                    <span id="buttonSpinner" class="spinner hidden"></span>
+                </button>
+                
+                <p class="checkout-disclaimer">
+                    By placing this order, you agree to make me richer. 💰
+                </p>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Initialize Stripe
+    const stripe = Stripe('{{ stripe_publishable_key }}');
+    const elements = stripe.elements();
+    
+    // Create card element
+    const cardElement = elements.create('card', {
+        style: {
+            base: {
+                fontSize: '16px',
+                color: '#ffffff',
+                '::placeholder': {
+                    color: '#aab7c4',
+                },
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+            },
+            invalid: {
+                color: '#fa755a',
+            },
+        },
+    });
+    
+    cardElement.mount('#card-element');
+    
+    // Handle card errors
+    cardElement.on('change', function(event) {
+        const displayError = document.getElementById('card-errors');
+        if (event.error) {
+            displayError.textContent = event.error.message;
+        } else {
+            displayError.textContent = '';
+        }
+    });
+    
+    // Handle form submission
+    const form = document.getElementById('checkoutForm');
+    form.addEventListener('submit', async function(event) {
+        event.preventDefault();
+        
+        setLoading(true);
+        
+        // Get form data
+        const formData = new FormData(form);
+        const customerData = {
+            name: formData.get('name'),
+            email: formData.get('email'),
+            phone: formData.get('phone'),
+            address: formData.get('address'),
+            city: formData.get('city'),
+            state: formData.get('state'),
+            zip: formData.get('zip')
+        };
+        
+        try {
+            // Create payment intent
+            const response = await fetch('/create-payment-intent', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(customerData)
+            });
+            
+            const data = await response.json();
+            
+            if (data.error) {
+                showError(data.error);
+                setLoading(false);
+                return;
+            }
+            
+            // Confirm payment
+            const result = await stripe.confirmCardPayment(data.clientSecret, {
+                payment_method: {
+                    card: cardElement,
+                    billing_details: {
+                        name: customerData.name,
+                        email: customerData.email,
+                        phone: customerData.phone,
+                        address: {
+                            line1: customerData.address,
+                            city: customerData.city,
+                            state: customerData.state,
+                            postal_code: customerData.zip
+                        }
+                    }
+                }
+            });
+            
+            if (result.error) {
+                showError(result.error.message);
+                setLoading(false);
+            } else {
+                // Payment successful - process order
+                await processOrder(customerData, result.paymentIntent.id);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showError('An error occurred. Please try again.');
+            setLoading(false);
+        }
+    });
+    
+    async function processOrder(customerData, paymentIntentId) {
+        try {
+            const response = await fetch('/process-order', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    ...customerData,
+                    payment_intent_id: paymentIntentId
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                // Redirect to confirmation page
+                window.location.href = `/confirmation/${data.order_number}`;
+            } else {
+                showError(data.error);
+                setLoading(false);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showError('An error occurred processing your order.');
+            setLoading(false);
+        }
+    }
+    
+    function setLoading(isLoading) {
+        const submitButton = document.getElementById('submitButton');
+        const buttonText = document.getElementById('buttonText');
+        const buttonSpinner = document.getElementById('buttonSpinner');
+        
+        if (isLoading) {
+            submitButton.disabled = true;
+            buttonText.classList.add('hidden');
+            buttonSpinner.classList.remove('hidden');
+        } else {
+            submitButton.disabled = false;
+            buttonText.classList.remove('hidden');
+            buttonSpinner.classList.add('hidden');
+        }
+    }
+    
+    function showError(message) {
+        const errorDiv = document.getElementById('card-errors');
+        errorDiv.textContent = message;
+    }
+</script>
+{% endblock %}
